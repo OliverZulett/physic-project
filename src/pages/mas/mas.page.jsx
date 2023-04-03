@@ -6,6 +6,8 @@ const MasPage = () => {
   const [angle, setAngle] = useState(45);
   const [pendulumIsRunning, setPendulumExecutionState] = useState(false);
 
+  const canvasRef = useRef(null);
+
   const handleSphereNumbers = (event) => {
     setSphereNumbers(event.target.value);
   };
@@ -55,7 +57,6 @@ const MasPage = () => {
     setNumeros(event.target.checked);
   };
 
-  const canvasRef = useRef(null);
 
   function drawPendulum(pendulumProps) {
     let { canvas, nBolas, desacc, angIni, nCiclos, numeros } = pendulumProps;
