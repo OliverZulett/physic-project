@@ -1,21 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import { Outlet, Link } from "react-router-dom";
 
 export default function HeaderComponent() {
   return (
-    <header>
-      <div className="navbar bg-base-100">
+    <header className="p-2">
+      <div className="navbar bg-primary rounded-box">
         <div className="flex-1">
-          <a className="btn btn-ghost normal-case text-xl">daisyUI</a>
+          <h1 className="text-xl font-semibold ml-3">Proyecto de Fisica</h1>
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <Link to="/mas">MAS</Link>
+              <Link to="/mas">M.A.S</Link>
             </li>
             <li>
-              <a>Item 3</a>
+              <Link to="/waves">ondas</Link>
             </li>
           </ul>
         </div>

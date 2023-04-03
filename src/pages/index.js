@@ -1,3 +1,5 @@
-import MASComponent from "./MAS/MAS";
+import ErrorPage from "./error/error.page";
+import MasPage from "./mas/mas.page";
+import WavesPage from "./waves/waves.page";
 
-export { MASComponent };
+export { WavesPage, ErrorPage, MasPage };
