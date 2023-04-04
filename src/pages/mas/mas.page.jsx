@@ -1,142 +1,136 @@
-import { useEffect, useRef, useState } from "react";
-// import './pendulum.js'
+import { useRef, useState } from "react";
 
 const MasPage = () => {
-  const [sphereNumbers, setSphereNumbers] = useState(1);
-  const [angle, setAngle] = useState(45);
+  const [initialAngle, setInitialAngle] = useState(45);
+  const [ropeLength, setRopeLength] = useState(200);
+  const [gravity, setGravity] = useState(9.81);
   const [pendulumIsRunning, setPendulumExecutionState] = useState(false);
+  const [pendulumInterval, setPendulumInterval] = useState(null);
+  const [period, setPeriod] = useState(0);
+  const [frequency, setFrequency] = useState(0);
+  const [velocity, setVelocity] = useState(0);
+  const [tension, setTension] = useState(0);
+  const [mass, setMass] = useState(10);
+  const [angularVelocity, setAngularVelocity] = useState(0);
+  const [instantaneousVelocity, setInstantaneousVelocity] = useState(0);
 
   const canvasRef = useRef(null);
 
-  const handleSphereNumbers = (event) => {
-    setSphereNumbers(event.target.value);
+  const handleInitialAngle = (event) => {
+    setInitialAngle(event.target.value);
   };
 
-  const handleAngle = (event) => {
-    setAngle(event.target.value);
+  const handleRopeLength = (event) => {
+    setRopeLength(event.target.value);
+  };
+
+  const handleGravity = (event) => {
+    setGravity(event.target.value);
+  };
+
+  const handleMass = (event) => {
+    setMass(event.target.value);
   };
 
   const handlePendulumExecutionState = (pendulumState) => {
     setPendulumExecutionState(pendulumState);
   };
 
-  //--------------------------------------
   function handleStartPendulum() {
     console.log("start");
-    handlePendulumExecutionState(true)
+    handlePendulumExecutionState(true);
+    const canvas = canvasRef.current;
+    drawPendulum({ canvas, ropeLength, initialAngle });
   }
 
   function handleStopPendulum() {
     console.log("stop");
-    handlePendulumExecutionState(false)
+    handlePendulumExecutionState(false);
+    clearInterval(pendulumInterval);
   }
-
-  const [nBolas, setNBolas] = useState(12);
-  const [desacc, setDesacc] = useState(2);
-  const [angIni, setAngIni] = useState(2);
-  const [nCiclos, setNCiclos] = useState(12);
-  const [numeros, setNumeros] = useState(false);
-
-  const handleNBolasChange = (event) => {
-    setNBolas(event.target.value);
-  };
-
-  const handleDesaccChange = (event) => {
-    setDesacc(event.target.value);
-  };
-
-  const handleAngIniChange = (event) => {
-    setAngIni(event.target.value);
-  };
-
-  const handleNCiclosChange = (event) => {
-    setNCiclos(event.target.value);
-  };
-
-  const handleNumerosChange = (event) => {
-    setNumeros(event.target.checked);
-  };
-
 
   function drawPendulum(pendulumProps) {
-    let { canvas, nBolas, desacc, angIni, nCiclos, numeros } = pendulumProps;
-    // const canvas = canvasRef.current;
-    let ctx = canvas.getContext("2d");
-    let h = canvas.getAttribute("width") / 2;
-    let l = 0.8 * canvas.getAttribute("height"); // 375 pixels = 0.357 m, aprox 1050 to 1
-    let radius = 17;
-    let shift = 10;
-    let persp = 1.8;
-    let dt = 10;
-    let i = 0;
-    let ang;
-    let str = "";
-    let cexp = 1;
-    angIni = (Math.PI / 20) * angIni;
-    // let nBolas = nBolas;
-    let cycles = nCiclos;
-    let acc = desacc;
-    // let numeros = numeros;
-
-    function draw() {
-      // draw white rectangle
-      ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, 2 * h, l / 0.8);
-
-      // draw the balls
-      for (let k = 0; k < nBolas; k++) {
-        //get the angle
-        //ang = angIni * Math.cos(Math.sqrt(9.8 / (l-k*shift) * 1050)*i*dt/1000);
-        ang =
-          cexp *
-          angIni *
-          Math.cos(
-            (((cycles + k) / cycles) * Math.sqrt((3 / l) * 1050) * i * dt) /
-              1000
-          );
-        cexp = Math.exp((-i / 10000) * acc);
-        // get the center position
-        let x = (l - k * shift * persp) * Math.sin(ang) + h;
-        let y = (l - k * shift * persp) * Math.cos(ang);
-        ctx.beginPath();
-        ctx.arc(x, y, radius - k / 3, 0, 2 * Math.PI);
-        if (k % 2 == 0) {
-          str = (k / 2 + "").repeat(6);
-        }
-        ctx.fillStyle = "#" + str;
-        ctx.fill();
-        // draw the line
-        ctx.beginPath();
-        ctx.moveTo(h, 0);
-        ctx.lineTo(x, y);
-        ctx.strokeStyle = "#" + str;
-        ctx.stroke();
-        // draw the ball number
-        if (numeros.checked) {
-          ctx.font = "13px Arial";
-          ctx.fillStyle = "black";
-          ctx.fillText(k + 1, x - radius / 3, y + radius / 3);
-        }
-      }
-      i++;
-    }
-    setInterval(() => draw(pendulumProps), dt);
-  }
-
-  function handleClick() {
-    const canvas = canvasRef.current;
-    drawPendulum({ canvas, nBolas, desacc, angIni, nCiclos, numeros });
-    // const ctx = canvas.getContext("2d");
-
-    // draw(ctx);
-  }
-
-  function handleClearBtnClick() {
-    // Aquí puedes poner el código que quieres ejecutar cuando se haga clic en el botón
-    // por ejemplo, puedes limpiar el canvas usando clearRect:
-    const canvas = canvasRef.current;
+    const { canvas, ropeLength, initialAngle } = pendulumProps;
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const H = canvas.height;
+    const W = canvas.width;
+    const minAngle = Number(initialAngle);
+    const maxAngle = 180 - minAngle;
+    let angle = minAngle;
+    let increaser = 1;
+
+    function runPendulum() {
+      drawRope(angle, ropeLength);
+      angle = increaser + angle;
+      if (angle < minAngle || angle > maxAngle) {
+        increaser *= -1;
+      }
+
+      let T = 2 * Math.PI * Math.sqrt(ropeLength / gravity);
+      T = Number.parseFloat(T).toFixed(2);
+      setPeriod(T);
+
+      setFrequency(Number.parseFloat(1 / T).toFixed(2));
+
+      let v = (2 * Math.PI * ropeLength) / T;
+      v = Number.parseFloat(v).toFixed(2);
+      setVelocity(v);
+
+      let omega = (2 * Math.PI) / T;
+      omega = Number.parseFloat(omega).toFixed(2);
+      setAngularVelocity(omega);
+
+      let theta = angle;
+      if (angle < 90) {
+        theta = 90 - angle;
+      } else {
+        theta = (180 - angle - 90);
+      }
+
+      console.log(`theta: ${theta}`);
+
+      omega = Math.sqrt(gravity / ropeLength);
+      let instVel = ropeLength * omega * Math.sin(theta);
+      instVel = Number.parseFloat(instVel).toFixed(2);
+
+      console.log(instVel);
+
+      setInstantaneousVelocity(instVel);
+
+      setTension(Number.parseFloat(mass * gravity).toFixed(2));
+    }
+
+    function drawRope(angle, ropeSize) {
+      ctx.clearRect(0, 0, W, H);
+
+      const h = W / 2; // centro en x
+      const k = 0; // centro en y
+      const r = ropeSize; // radio
+
+      const angleInDegrees = angle;
+      const angleInRadians = (angleInDegrees * Math.PI) / 180;
+
+      const x = h + r * Math.cos(angleInRadians);
+      const y = k + r * Math.sin(angleInRadians);
+
+      const sphereRadius = 30;
+
+      ctx.fillStyle = "#000000";
+      ctx.beginPath();
+      ctx.arc(x, y, sphereRadius, 0, 2 * Math.PI);
+      ctx.fill();
+
+      ctx.beginPath(); // Start a new path
+      ctx.moveTo(h, k); // Move the pen to (30, 50)
+      ctx.lineTo(x, y); // Draw a line to (150, 100)
+      ctx.stroke();
+    }
+
+    const runningInterval = setInterval(() => {
+      runPendulum();
+    }, 100);
+
+    setPendulumInterval(runningInterval);
   }
 
   return (
@@ -148,37 +142,70 @@ const MasPage = () => {
             <hr />
             <br />
           </div>
-          {/* sphere numbers */}
           <div>
             <label className="label flex">
-              <span className="label-text"># Esferas</span>
-              <span className="label-text">{sphereNumbers}</span>
+              <span className="label-text"># Angulo Inicial</span>
+              <span className="label-text">{initialAngle} °</span>
             </label>
             <input
               type="range"
-              min="1"
-              max="20"
-              value={sphereNumbers}
-              onChange={handleSphereNumbers}
-              className={`range ${pendulumIsRunning ? 'range-secondary' : 'range-primary'}`}
+              min="5"
+              max="85"
+              value={initialAngle}
+              onChange={handleInitialAngle}
+              className={`range ${
+                pendulumIsRunning ? "range-secondary" : "range-primary"
+              }`}
               step="1"
               disabled={pendulumIsRunning}
             />
           </div>
-          {/* angle */}
+          {/* rope size */}
           <div>
             <label className="label flex">
-              <span className="label-text"># Angulo</span>
-              <span className="label-text">{angle}</span>
+              <span className="label-text"># Longitud de la cuerda</span>
+              <span className="label-text">{ropeLength} cm</span>
             </label>
             <input
               type="range"
-              min="9"
-              max="90"
-              value={angle}
-              onChange={handleAngle}
-              className={`range ${pendulumIsRunning ? 'range-secondary' : 'range-primary'}`}
+              min="200"
+              max="350"
+              value={ropeLength}
+              onChange={handleRopeLength}
+              className={`range ${
+                pendulumIsRunning ? "range-secondary" : "range-primary"
+              }`}
               step="1"
+              disabled={pendulumIsRunning}
+            />
+          </div>
+          {/* gravity */}
+          <div>
+            <label className="label flex">
+              <span className="label-text"># Gravedad</span>
+              <span className="label-text">{gravity} m/s2</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Valor de la Gravedad"
+              value={gravity}
+              onChange={handleGravity}
+              className="input input-bordered input-success w-full"
+              disabled={pendulumIsRunning}
+            />
+          </div>
+          {/* mass */}
+          <div>
+            <label className="label flex">
+              <span className="label-text"># Masa</span>
+              <span className="label-text">{mass} kg</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Valor de la Gravedad"
+              value={mass}
+              onChange={handleMass}
+              className="input input-bordered input-success w-full"
               disabled={pendulumIsRunning}
             />
           </div>
@@ -224,86 +251,39 @@ const MasPage = () => {
             ></canvas>
           </div>
         </div>
+        {/* Results */}
         <div className="w-3/12 bg-base-200 p-5 ml-3 rounded-lg">
           <div>
-            <h1 className="text-xl">Datos</h1>
+            <h1 className="text-xl">Resultados</h1>
             <hr />
             <br />
           </div>
+          <div className="stat">
+            <div className="stat-title">Periodo</div>
+            <div className="stat-value">{period} s</div>
+          </div>
+          <div className="stat">
+            <div className="stat-title">Frecuencia</div>
+            <div className="stat-value">{frequency} Hz</div>
+          </div>
+          <div className="stat">
+            <div className="stat-title">Velocidad promedio</div>
+            <div className="stat-value">{velocity} m/s</div>
+          </div>
+          <div className="stat">
+            <div className="stat-title">Velocidad angular</div>
+            <div className="stat-value">{angularVelocity} rad/s</div>
+          </div>
+          {/* <div className="stat">
+            <div className="stat-title">Velocidad instantanea</div>
+            <div className="stat-value">{instantaneousVelocity} m/s</div>
+          </div> */}
+          <div className="stat">
+            <div className="stat-title">Tension</div>
+            <div className="stat-value">{tension} N</div>
+          </div>
         </div>
       </div>
-
-      {/* <div className="row">
-        <div className="col-xs-12 col-sm-2">
-          <button onClick={handleClick}>Dibujar</button>
-          <button onClick={handleClearBtnClick}>Parar</button>
-          <h3>Controles</h3>
-          <br />
-          <p>Bolitas</p>
-           1 =====> 20
-          <input
-            id="nBolas"
-            type="range"
-            min="1"
-            max="20"
-            value={nBolas}
-            style={{ width: "100px" }}
-            onChange={handleNBolasChange}
-          />
-          <br />
-          <p>Desaceleracion</p>
-          0 =====> 2
-          <input
-            id="desacc"
-            type="range"
-            min="0"
-            max="2"
-            value={desacc}
-            style={{ width: "100px" }}
-            onChange={handleDesaccChange}
-          />
-          <br />
-          <p>Angulo inicial</p>
-          9 =====> 90
-          <input
-            id="angIni"
-            type="range"
-            min="1"
-            max="10"
-            value={angIni}
-            style={{ width: "100px" }}
-            onChange={handleAngIniChange}
-          />
-          <br />
-          <p>Ciclos</p>
-          <input
-            id="nCiclos"
-            type="range"
-            min="6"
-            max="24"
-            value={nCiclos}
-            style={{ width: "100px" }}
-            onChange={handleNCiclosChange}
-          />
-          <br />
-          <p>Numeros?</p>
-          <input
-            id="numeros"
-            type="checkbox"
-            checked={numeros}
-            onChange={handleNumerosChange}
-          />
-        </div>
-        <div className="col-xs-12 col-sm-10">
-          <canvas
-            id="myCanvas"
-            ref={canvasRef}
-            width="1000"
-            height="600"
-            style={{ border: "1px solid" }}
-          ></canvas>
-        </div>
-      </div> */}
     </div>
   );
 };
