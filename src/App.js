@@ -1,9 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import HeaderComponent from "./components/header/Header";
 import FooterComponent from "./components/footer/Footer";
+import PendulumContext from "./context/pendulum.context";
+import ControlsComponent from "./components/pendulum/Controls";
 
 function App() {
+  const [pendulumValue, setPendulumValue] = useState({
+    initialAngle: 0,
+    angle: 0,
+    ropeSize: 200,
+    frequency: 0,
+    period: 0,
+    amplitude: 0,
+    angularVelocity: 0,
+    gravity: 9.81,
+    mass: 10,
+    tension: 0,
+    instantVelocity: 0,
+    pendulumIsRunning: false
+  })
+
+  const updatePendulumValue = (pendulumValue) => {
+    console.log('pendulumValue', pendulumValue);
+    setPendulumValue(pendulumValue)
+  }
+
   useEffect(() => {
     document.title = "Physic Project";
     document.documentElement.setAttribute("data-theme", "emerald");
@@ -12,9 +34,12 @@ function App() {
   return (
     <React.Fragment>
       <HeaderComponent className="header" />
-      <main className="mx-3">
-        <Outlet />
-      </main>
+      <PendulumContext.Provider value={{pendulumValue, updatePendulumValue}}>
+        <main className="mx-3">
+          {/* <Outlet /> */}
+          <ControlsComponent/>
+        </main>
+      </PendulumContext.Provider>
       <FooterComponent className="header" />
     </React.Fragment>
   );

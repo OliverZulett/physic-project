@@ -128,7 +128,7 @@ const MasPage = () => {
 
     const runningInterval = setInterval(() => {
       runPendulum();
-    }, 100);
+    }, 50);
 
     setPendulumInterval(runningInterval);
   }
