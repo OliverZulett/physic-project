@@ -108,31 +108,31 @@ function App() {
       setTension(Number.parseFloat(mass * gravity).toFixed(2));
     }
 
-    function drawRope(angle, ropeSize) {
-      ctx.clearRect(0, 0, W, H);
+    // function drawRope(angle, ropeSize) {
+    //   ctx.clearRect(0, 0, W, H);
 
-      const h = W / 2; // centro en x
-      const k = 0; // centro en y
-      const r = ropeSize; // radio
+    //   const h = W / 2; // centro en x
+    //   const k = 0; // centro en y
+    //   const r = ropeSize; // radio
 
-      const angleInDegrees = angle;
-      const angleInRadians = (angleInDegrees * Math.PI) / 180;
+    //   const angleInDegrees = angle;
+    //   const angleInRadians = (angleInDegrees * Math.PI) / 180;
 
-      const x = h + r * Math.cos(angleInRadians);
-      const y = k + r * Math.sin(angleInRadians);
+    //   const x = h + r * Math.cos(angleInRadians);
+    //   const y = k + r * Math.sin(angleInRadians);
 
-      const sphereRadius = 30;
+    //   const sphereRadius = 30;
 
-      ctx.fillStyle = "#000000";
-      ctx.beginPath();
-      ctx.arc(x, y, sphereRadius, 0, 2 * Math.PI);
-      ctx.fill();
+    //   ctx.fillStyle = "#000000";
+    //   ctx.beginPath();
+    //   ctx.arc(x, y, sphereRadius, 0, 2 * Math.PI);
+    //   ctx.fill();
 
-      ctx.beginPath(); // Start a new path
-      ctx.moveTo(h, k); // Move the pen to (30, 50)
-      ctx.lineTo(x, y); // Draw a line to (150, 100)
-      ctx.stroke();
-    }
+    //   ctx.beginPath(); // Start a new path
+    //   ctx.moveTo(h, k); // Move the pen to (30, 50)
+    //   ctx.lineTo(x, y); // Draw a line to (150, 100)
+    //   ctx.stroke();
+    // }
 
     const runningInterval = setInterval(() => {
       runPendulum();

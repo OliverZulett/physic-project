@@ -4,6 +4,8 @@ import HeaderComponent from "./components/header/Header";
 import FooterComponent from "./components/footer/Footer";
 import PendulumContext from "./context/pendulum.context";
 import ControlsComponent from "./components/pendulum/Controls";
+import PendulumComponent from "./components/pendulum/Pendulum";
+import ResultComponent from "./components/pendulum/Results";
 
 function App() {
   const [pendulumValue, setPendulumValue] = useState({
@@ -18,13 +20,13 @@ function App() {
     mass: 10,
     tension: 0,
     instantVelocity: 0,
-    pendulumIsRunning: false
-  })
+    pendulumIsRunning: false,
+  });
 
   const updatePendulumValue = (pendulumValue) => {
-    console.log('pendulumValue', pendulumValue);
-    setPendulumValue(pendulumValue)
-  }
+    console.log("pendulumValue", pendulumValue);
+    setPendulumValue(pendulumValue);
+  };
 
   useEffect(() => {
     document.title = "Physic Project";
@@ -34,10 +36,14 @@ function App() {
   return (
     <React.Fragment>
       <HeaderComponent className="header" />
-      <PendulumContext.Provider value={{pendulumValue, updatePendulumValue}}>
+      <PendulumContext.Provider value={{ pendulumValue, updatePendulumValue }}>
         <main className="mx-3">
-          {/* <Outlet /> */}
-          <ControlsComponent/>
+          <div className="flex w-full">
+            {/* <Outlet /> */}
+            <ControlsComponent />
+            <PendulumComponent />
+            <ResultComponent />
+          </div>
         </main>
       </PendulumContext.Provider>
       <FooterComponent className="header" />

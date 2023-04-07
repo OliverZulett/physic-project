@@ -4,7 +4,7 @@ import PendulumContext from "../../context/pendulum.context";
 export default function ControlsComponent() {
   const { pendulumValue, updatePendulumValue } = useContext(PendulumContext);
 
-  const [formValues, setFormValues] = useState({
+  let [formValues, setFormValues] = useState({
     initialAngle: pendulumValue.initialAngle,
     ropeSize: pendulumValue.ropeSize,
     gravity: pendulumValue.gravity,
@@ -17,18 +17,16 @@ export default function ControlsComponent() {
     setFormValues({ ...formValues, [name]: value });
   };
 
-  // const handlePendulumValueChange = () => {
-  //   updatePendulumValue(formValues);
-  // };
-
   const handleStartPendulum = () => {
-    setFormValues({ ...formValues, pendulumIsRunning: true });
-    updatePendulumValue({ formValues});
+    formValues = { ...formValues, pendulumIsRunning: true };
+    setFormValues(formValues);
+    updatePendulumValue(formValues);
   };
 
   const handleStopPendulum = () => {
-    setFormValues({ ...formValues, pendulumIsRunning: false });
-    updatePendulumValue({ formValues});
+    formValues = { ...formValues, pendulumIsRunning: false };
+    setFormValues(formValues);
+    updatePendulumValue(formValues);
   };
 
   return (
