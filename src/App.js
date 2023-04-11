@@ -5,8 +5,11 @@ import PendulumContext from "./context/pendulum.context";
 import ControlsComponent from "./components/pendulum/Controls";
 import PendulumComponent from "./components/pendulum/Pendulum";
 import ResultComponent from "./components/pendulum/Results";
+import AngleContext from "./context/angle.context";
 
 function App() {
+  const [angle, setAngle] = useState(0);
+
   const [pendulumValue, setPendulumValue] = useState({
     initialAngle: 0,
     angle: 0,
@@ -23,8 +26,10 @@ function App() {
   });
 
   const updatePendulumValue = (pendulumValue) => {
-    console.log("pendulumValue", pendulumValue);
     setPendulumValue(pendulumValue);
+  };
+  const updateAngle = (angle) => {
+    setAngle(angle);
   };
 
   useEffect(() => {
@@ -36,13 +41,15 @@ function App() {
     <React.Fragment>
       <HeaderComponent className="header" />
       <PendulumContext.Provider value={{ pendulumValue, updatePendulumValue }}>
-        <main className="mx-3">
-          <div className="flex w-full">
-            <ControlsComponent />
-            <PendulumComponent />
-            <ResultComponent />
-          </div>
-        </main>
+        <AngleContext.Provider value={{ angle, updateAngle }}>
+          <main className="mx-3">
+            <div className="flex w-full">
+              <ControlsComponent />
+              <PendulumComponent />
+              <ResultComponent />
+            </div>
+          </main>
+        </AngleContext.Provider>
       </PendulumContext.Provider>
       <FooterComponent className="header" />
     </React.Fragment>

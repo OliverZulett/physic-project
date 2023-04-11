@@ -38,7 +38,6 @@ export default function drawPendulum(pendulumProps) {
   ctx.lineTo(h, H);
   ctx.stroke();
 
-  console.log(angle);
   // draw angle
   ctx.beginPath();
   if (angleInDegrees > 90) {
@@ -51,7 +50,7 @@ export default function drawPendulum(pendulumProps) {
   ctx.beginPath();
   ctx.font="20px Verdana";
   if (angleInDegrees > 90) {
-    ctx.strokeText(`${angle - 90} º`,h - 35,35,30);
+    ctx.strokeText(`- ${angle - 90} º`,h - 35,35,30);
   } else {
     ctx.strokeText(`${90 - angle} º`,h + 10,35,30);
   }

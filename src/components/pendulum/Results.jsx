@@ -1,14 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import PendulumContext from "../../context/pendulum.context";
+import AngleContext from "../../context/angle.context";
 
 const ResultComponent = () => {
   const { pendulumValue, } = useContext(PendulumContext);
+  const { angle } = useContext(AngleContext);
 
   const [results, setResults] = useState({
     period: 0,
   });
 
   useEffect(() => {
+    //calculate amplitude
+    let A = pendulumValue.initialAngle * 2;
+
     // calculate period
     let T =
       2 * Math.PI * Math.sqrt(pendulumValue.ropeSize / pendulumValue.gravity);
@@ -20,9 +25,21 @@ const ResultComponent = () => {
     let omega = 2 * Math.PI * f;
 
     //calculate pendulum velocity
-    let v = Math.sqrt(pendulumValue.gravity * pendulumValue.ropeSize);
+    // let v = Math.sqrt(pendulumValue.gravity * pendulumValue.ropeSize);
+
+    // console.log(angle);
+    let amplitude = pendulumValue.initialAngle * 2; // amplitud en grados
+    let max_height = Math.sin(amplitude * (Math.PI / 180)); // altura máxima en metros
+    let actual_height = Math.sin(angle * (Math.PI / 180)); // altura actual en metros
+    let v = Math.sqrt(
+      2 * pendulumValue.gravity * (max_height - actual_height)
+    );
+    v = isNaN(v) ? 0 : v
+
+    let a = pendulumValue.gravity * Math.sin(angle * (Math.PI / 180));
 
     setResults({
+      amplitude: A,
       period: Number.parseFloat(T).toFixed(2),
       frequency: Number.parseFloat(f).toFixed(2),
       angularFrequency: Number.parseFloat(omega).toFixed(2),
@@ -30,8 +47,9 @@ const ResultComponent = () => {
         pendulumValue.mass * pendulumValue.gravity
       ).toFixed(2),
       velocity: Number.parseFloat(v).toFixed(2),
+      acceleration: Number.parseFloat(a).toFixed(2),
     });
-  }, [pendulumValue]);
+  }, [pendulumValue, angle]);
 
   return (
     <div className="w-3/12 bg-base-200 p-5 ml-3 rounded-lg">
@@ -39,6 +57,10 @@ const ResultComponent = () => {
         <h1 className="text-xl">Resultados</h1>
         <hr />
         <br />
+      </div>
+      <div className="stat">
+        <div className="stat-title">Amplitude</div>
+        <div className="stat-value">{results.amplitude} º</div>
       </div>
       <div className="stat">
         <div className="stat-title">Periodo</div>
@@ -55,6 +77,10 @@ const ResultComponent = () => {
       <div className="stat">
         <div className="stat-title">Velocidad</div>
         <div className="stat-value">{results.velocity} m/s</div>
+      </div>
+      <div className="stat">
+        <div className="stat-title">Aceleracion</div>
+        <div className="stat-value">{results.acceleration} m/s</div>
       </div>
       <div className="stat">
         <div className="stat-title">Tension</div>
