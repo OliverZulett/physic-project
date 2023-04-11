@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import PendulumContext from "../../context/pendulum.context";
 
 const ResultComponent = () => {
-  const { pendulumValue, updatePendulumValue } = useContext(PendulumContext);
+  const { pendulumValue, } = useContext(PendulumContext);
 
   const [results, setResults] = useState({
     period: 0,
@@ -13,10 +13,14 @@ const ResultComponent = () => {
     let T =
       2 * Math.PI * Math.sqrt(pendulumValue.ropeSize / pendulumValue.gravity);
 
-    // calulate frequency
+    // calculate frequency
     let f = 1 / T;
+
     // calculate angular frequency
     let omega = 2 * Math.PI * f;
+
+    //calculate pendulum velocity
+    let v = Math.sqrt(pendulumValue.gravity * pendulumValue.ropeSize);
 
     setResults({
       period: Number.parseFloat(T).toFixed(2),
@@ -25,6 +29,7 @@ const ResultComponent = () => {
       tension: Number.parseFloat(
         pendulumValue.mass * pendulumValue.gravity
       ).toFixed(2),
+      velocity: Number.parseFloat(v).toFixed(2),
     });
   }, [pendulumValue]);
 
@@ -46,6 +51,10 @@ const ResultComponent = () => {
       <div className="stat">
         <div className="stat-title">Velocidad angular</div>
         <div className="stat-value">{results.angularFrequency} rad/s</div>
+      </div>
+      <div className="stat">
+        <div className="stat-title">Velocidad</div>
+        <div className="stat-value">{results.velocity} m/s</div>
       </div>
       <div className="stat">
         <div className="stat-title">Tension</div>

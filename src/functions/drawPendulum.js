@@ -25,7 +25,34 @@ export default function drawPendulum(pendulumProps) {
 
   // draw rope
   ctx.beginPath();
+  ctx.strokeStyle = '#000000'
   ctx.moveTo(h, k);
   ctx.lineTo(x, y);
   ctx.stroke();
+
+  ctx.strokeStyle = 'gray'
+
+  // draw vertical line
+  ctx.beginPath();
+  ctx.moveTo(h, 0);
+  ctx.lineTo(h, H);
+  ctx.stroke();
+
+  console.log(angle);
+  // draw angle
+  ctx.beginPath();
+  if (angleInDegrees > 90) {
+    ctx.arc(h, 0, 70, Math.PI / 2, angleInRadians);
+  } else {
+    ctx.arc(h, 0, 70, angleInRadians, Math.PI / 2);
+  }
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.font="20px Verdana";
+  if (angleInDegrees > 90) {
+    ctx.strokeText(`${angle - 90} º`,h - 35,35,30);
+  } else {
+    ctx.strokeText(`${90 - angle} º`,h + 10,35,30);
+  }
 }

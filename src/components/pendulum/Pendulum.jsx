@@ -3,7 +3,7 @@ import PendulumContext from "../../context/pendulum.context";
 import drawPendulum from "../../functions/drawPendulum";
 
 const PendulumComponent = () => {
-  const { pendulumValue, updatePendulumValue } = useContext(PendulumContext);
+  const { pendulumValue, } = useContext(PendulumContext);
   const [pendulumInterval, setPendulumInterval] = useState(null);
 
   useEffect(() => {
@@ -15,7 +15,22 @@ const PendulumComponent = () => {
       console.log("stop pendulum");
       stopPendulum();
     }
-  }, [pendulumValue]);
+
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      // Aquí puedes volver a dibujar el contenido del canvas en función del nuevo tamaño
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Elimina el event listener cuando el componente se desmonta
+    return () => window.removeEventListener('resize', resizeCanvas);
+  }, [pendulumValue,]);
 
   const canvasRef = useRef(null);
 
@@ -24,11 +39,15 @@ const PendulumComponent = () => {
     const ropeSize = pendulumValue.ropeSize;
     const sphereRadius = 30;
 
-    const minAngle = Number(pendulumValue.initialAngle);
+    const minAngle = 90 - Number(pendulumValue.initialAngle);
     const maxAngle = 180 - minAngle;
 
     let angle = minAngle;
     let increaser = 1;
+
+    let speed = Math.sqrt( pendulumValue.gravity * pendulumValue.ropeSize);
+
+    console.log(10/speed);
 
     function animatePendulum() {
       drawPendulum({ canvas, angle, ropeSize, sphereRadius });
@@ -40,7 +59,7 @@ const PendulumComponent = () => {
 
     const runningInterval = setInterval(() => {
       animatePendulum();
-    }, 50);
+    }, 1000/speed);
 
     setPendulumInterval(runningInterval);
   };
@@ -49,6 +68,10 @@ const PendulumComponent = () => {
     clearInterval(pendulumInterval);
   };
 
+  const canvasStyle = {
+    width: '100%',
+    height: '100%',
+  }
   return (
     <div className="w-6/12 bg-base-200 p-5 rounded-lg">
       <div>
@@ -57,11 +80,12 @@ const PendulumComponent = () => {
         <br />
       </div>
       {/* Animation */}
-      <div className="flex justify-center">
+      <div className="flex justify-center h-[90%]">
         <canvas
           ref={canvasRef}
-          width="800"
-          height="600"
+          // width="800"
+          // height="600"
+          style={canvasStyle}
           className="border-2 border-primary"
         ></canvas>
       </div>

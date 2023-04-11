@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
 import HeaderComponent from "./components/header/Header";
 import FooterComponent from "./components/footer/Footer";
 import PendulumContext from "./context/pendulum.context";
@@ -39,7 +38,6 @@ function App() {
       <PendulumContext.Provider value={{ pendulumValue, updatePendulumValue }}>
         <main className="mx-3">
           <div className="flex w-full">
-            {/* <Outlet /> */}
             <ControlsComponent />
             <PendulumComponent />
             <ResultComponent />
