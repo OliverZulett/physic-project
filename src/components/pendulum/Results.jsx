@@ -22,7 +22,7 @@ const ResultComponent = () => {
     let f = 1 / T;
 
     // calculate angular frequency
-    let omega = 2 * Math.PI * f;
+    let omega = Math.sqrt(pendulumValue.gravity / pendulumValue.ropeSize);
 
     //calculate pendulum velocity
     // let v = Math.sqrt(pendulumValue.gravity * pendulumValue.ropeSize);
@@ -59,31 +59,31 @@ const ResultComponent = () => {
         <br />
       </div>
       <div className="stat">
-        <div className="stat-title">Amplitude</div>
+        <div className="stat-title">Amplitude (A = 2α)</div>
         <div className="stat-value">{results.amplitude} º</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Periodo</div>
+        <div className="stat-title">Periodo (T = 2π√(L/g))</div>
         <div className="stat-value">{results.period} s</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Frecuencia</div>
+        <div className="stat-title">Frecuencia (f = 1/T)</div>
         <div className="stat-value">{results.frequency} Hz</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Velocidad angular</div>
+        <div className="stat-title">Velocidad angular (ω = √(g/L))</div>
         <div className="stat-value">{results.angularFrequency} rad/s</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Velocidad</div>
+        <div className="stat-title">Velocidad (v = √(2g(sin(A) - sin(α))))</div>
         <div className="stat-value">{results.velocity} m/s</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Aceleracion</div>
+        <div className="stat-title">Aceleracion (a = gsin(α))</div>
         <div className="stat-value">{results.acceleration} m/s</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Tension</div>
+        <div className="stat-title">Tension (T = mg)</div>
         <div className="stat-value">{results.tension} N</div>
       </div>
     </div>
